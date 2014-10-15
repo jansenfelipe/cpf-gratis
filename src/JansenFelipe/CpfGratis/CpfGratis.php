@@ -88,7 +88,7 @@ class CpfGratis {
                 "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                 "Accept-Language: pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3",
                 "Accept-Encoding: gzip, deflate",
-                "Referer: http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/Cnpjreva_Solicitacao2.asp",
+                "Referer: http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/ConsultaPublica.asp",
                 "Cookie: ' . $arrayCookie[0] . '",
                 "Connection: keep-alive"
             ),
