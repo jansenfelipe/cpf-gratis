@@ -37,7 +37,7 @@ class CpfGratis {
                 $headers[] = $key;
         }
 
-        require_once __DIR__ . '\phpQuery-onefile.php';
+        require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
         \phpQuery::newDocumentHTML($body, $charset = 'utf-8');
 
         $viewstate = \phpQuery::pq("#viewstate")->val();
@@ -101,7 +101,7 @@ class CpfGratis {
         $html = curl_exec($ch);
         curl_close($ch);
 
-        require_once __DIR__ . '\phpQuery-onefile.php';
+        require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
         \phpQuery::newDocumentHTML($html, $charset = 'utf-8');
 
         $class = pq('#F_Consultar > div > div.caixaConteudo > div > div:nth-child(3) > p > span.clConteudoDados');
