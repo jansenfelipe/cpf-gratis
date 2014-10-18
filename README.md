@@ -16,8 +16,27 @@ Adicione no seu arquivo `composer.json` o seguinte registro na chave `require`
 Execute
 
     $ composer update
+    
+Adicione o autoload.php do composer no seu arquivo PHP.
 
-## (Laravel)
+    require_once 'vendor/autoload.php';  
+
+Primeiro chame o método `getParams()` para retornar os dados necessários para enviar no método `consulta()` 
+
+    $params = CpfGratis::getParams(); //Output: array('captcha', 'captchaBase64', 'viewstate', 'cookie')
+
+Agora chame o método `consulta()`
+
+    $dadosPessoa = CpfGratis::consulta(
+        'INFORME_O_CPF',
+        'INFORME_AS_LETRAS_DO_CAPTCHA',
+        $params['viewstate'],
+        $params['cookie']
+    );
+
+### Frameworks
+
+##### (Laravel)
 
 Abra seu arquivo `config/app.php` e adicione `'JansenFelipe\CpfGratis\CpfGratisServiceProvider'` ao final do array `$providers`
 
@@ -39,36 +58,3 @@ Adicione também `'CpfGratis' => 'JansenFelipe\CpfGratis\Facade'` no final do ar
         'CpfGratis'    => 'JansenFelipe\CpfGratis\Facade',
 
     ),
-
-Agora chame o método `getParams()` para retornas os dados necessários para enviar no método `consulta()` 
-
-    $params = CpfGratis::getParams(); //Output: array('captcha', 'viewstate', 'cookie')
-
-Obs: Na resposta, a chave `captcha` contém a URL da imagem.
-
-    $dadosPessoa = CpfGratis::consulta(
-        'INFORME_O_CPF',
-        'INFORME_AS_LETRAS_DO_CAPTCHA',
-        $params['viewstate'],
-        $params['cookie']
-    );
-
-
-### (No-Laravel)
-
-Adicione o autoload.php do composer no seu arquivo PHP.
-
-    require_once 'vendor/autoload.php';  
-
-Agora chame o método `getParams()` para retornas os dados necessários para enviar no método `consulta()` 
-
-    $params = CpfGratis::getParams(); //Output: array('captcha', 'viewstate', 'cookie')
-
-Obs: Na resposta, a chave `captcha` contém a URL da imagem.
-
-    $dadosPessoa = CpfGratis::consulta(
-        'INFORME_O_CPF',
-        'INFORME_AS_LETRAS_DO_CAPTCHA',
-        $params['viewstate'],
-        $params['cookie']
-    );
