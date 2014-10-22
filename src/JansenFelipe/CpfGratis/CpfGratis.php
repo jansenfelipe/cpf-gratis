@@ -36,8 +36,10 @@ class CpfGratis {
             } else
                 $headers[] = $key;
         }
-
-        require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
+        
+        if (!method_exists('phpQuery', 'newDocumentHTML'))
+            require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
+        
         \phpQuery::newDocumentHTML($body, $charset = 'utf-8');
 
         $viewstate = \phpQuery::pq("#viewstate")->val();

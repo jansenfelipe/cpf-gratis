@@ -11,7 +11,7 @@ Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para s
 
 Adicione no seu arquivo `composer.json` o seguinte registro na chave `require`
 
-    "jansenfelipe/cpf-gratis": "dev-master"
+    "jansenfelipe/cpf-gratis": "1.0.*@dev"
 
 Execute
 
