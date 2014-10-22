@@ -48,9 +48,13 @@ class CpfGratis {
             throw new Exception('Erro ao recuperar viewstate');
 
         $imgcaptcha = \phpQuery::pq("#imgcaptcha")->attr('src');
+        $urlCaptcha = 'http://www.receita.fazenda.gov.br' . $imgcaptcha;
 
+        $captchaBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($urlCaptcha));
+        
         return array(
-            'captcha' => 'http://www.receita.fazenda.gov.br' . $imgcaptcha,
+            'captcha' => $urlCaptcha,
+            'captchaBase64' => $captchaBase64,
             'viewstate' => $viewstate,
             'cookie' => $headers['Set-Cookie']
         );
