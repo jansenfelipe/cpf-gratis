@@ -88,7 +88,7 @@ class CpfGratis {
                 "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
                 "Accept-Language: pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3",
                 "Accept-Encoding: gzip, deflate",
-                "Referer: http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/Cnpjreva_Solicitacao2.asp",
+                "Referer: http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/ConsultaPublica.asp",
                 "Cookie: ' . $arrayCookie[0] . '",
                 "Connection: keep-alive"
             ),
@@ -101,7 +101,9 @@ class CpfGratis {
         $html = curl_exec($ch);
         curl_close($ch);
 
-        require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
+        if (!method_exists('phpQuery', 'newDocumentHTML'))
+            require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
+
         \phpQuery::newDocumentHTML($html, $charset = 'utf-8');
 
         $class = pq('#F_Consultar > div > div.caixaConteudo > div > div:nth-child(3) > p > span.clConteudoDados');
