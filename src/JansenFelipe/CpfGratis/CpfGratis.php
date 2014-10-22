@@ -101,7 +101,9 @@ class CpfGratis {
         $html = curl_exec($ch);
         curl_close($ch);
 
-        require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
+        if (!method_exists('phpQuery', 'newDocumentHTML'))
+            require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
+
         \phpQuery::newDocumentHTML($html, $charset = 'utf-8');
 
         $class = pq('#F_Consultar > div > div.caixaConteudo > div > div:nth-child(3) > p > span.clConteudoDados');
