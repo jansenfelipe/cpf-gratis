@@ -1,5 +1,5 @@
 {
-    "name": "jansenfelipe/cpf-gratis",
+    "name": "misabitencourt/cpf-gratis",
     "description": "Nova versão de jansenfelipe/cpf-gratis, suportando atualização da Receita",
     "keywords": ["laravel", "cpf", "php"],
     "license": "MIT",
