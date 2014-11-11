@@ -1,12 +1,16 @@
 {
     "name": "jansenfelipe/cpf-gratis",
-    "description": "Com esse pacote você poderá consultar, gratuitamente, CPFs diretamente no site da receita.",
+    "description": "Nova versão de jansenfelipe/cpf-gratis, suportando atualização da Receita",
     "keywords": ["laravel", "cpf", "php"],
     "license": "MIT",
     "authors": [
         {
             "name": "Jansen Felipe",
             "email": "jansen.felipe@gmail.com"
+        },
+        {
+            "name": "Misael Braga de Bitencourt",
+            "email": "misabitencourt@gmail.com"
         }
     ],
     "require": {

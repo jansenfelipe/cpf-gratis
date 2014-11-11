@@ -42,20 +42,30 @@ class CpfGratis {
         
         \phpQuery::newDocumentHTML($body, $charset = 'utf-8');
 
-        $viewstate = \phpQuery::pq("#viewstate")->val();
-
-        if ($viewstate == "")
-            throw new Exception('Erro ao recuperar viewstate');
-
-        $imgcaptcha = \phpQuery::pq("#imgcaptcha")->attr('src');
-        $urlCaptcha = 'http://www.receita.fazenda.gov.br' . $imgcaptcha;
-
-        $captchaBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($urlCaptcha));
+        $clientId = \phpQuery::pq("div[data-clienteid]:first")->attr('data-clienteid');
         
+        /*
+         * Enviando post para obter base64 da imagem
+         */    
+        $ch = curl_init();
+        ob_start();
+        curl_setopt($ch,CURLOPT_URL, 'http://captcha2.servicoscorporativos.serpro.gov.br/captcha/1.0.0/imagem');
+        curl_setopt($ch,CURLOPT_POST, 1);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, $clientId);
+        curl_setopt($ch, CURLOPT_ENCODING ,"");
+        curl_exec($ch);
+        $result = ob_get_contents();
+        curl_close($ch);
+        ob_end_clean();
+        $result = explode('@', $result);
+
+        if (sizeof($result) < 2){
+            exit('Não foi possível obter o token, tente novamente');
+        }
+                        
         return array(
-            'captcha' => $urlCaptcha,
-            'captchaBase64' => $captchaBase64,
-            'viewstate' => $viewstate,
+            'token'  => $result[0],
+            'image'  => $result[1],
             'cookie' => $headers['Set-Cookie']
         );
     }
@@ -70,17 +80,18 @@ class CpfGratis {
      * @throws Exception
      * @return array  Dados da pessoa
      */
-    public static function consulta($cpf, $captcha, $viewstate, $stringCookie) {
+    public static function consulta($cpf, $token, $captcha, $stringCookie) {
         $arrayCookie = explode(';', $stringCookie);
 
         if (!Utils::isCpf($cpf))
-            throw new \Exception('O CPF informado não é válido');
+            exit('O CPF informado não é válido');
 
         $ch = curl_init("http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/ConsultaPublicaExibir.asp");
 
         $param = array(
-            'viewstate' => $viewstate,
-            'captcha' => $captcha,
+            //'viewstate' => $viewstate,
+            'txtToken_captcha_serpro_gov_br' => $stringCookie,
+            'txtTexto_captcha_serpro_gov_br' => $captcha,
             'captchaAudio' => '',
             'Enviar' => 'Consultar',
             'txtCPF' => Utils::unmask($cpf)
@@ -112,26 +123,28 @@ class CpfGratis {
 
         \phpQuery::newDocumentHTML($html, $charset = 'utf-8');
 
-        $class = pq('#F_Consultar > div > div.caixaConteudo > div > div:nth-child(3) > p > span.clConteudoDados');
-
         $result = array();
-        foreach ($class as $clConteudoDados)
-            $result[] = trim(pq($clConteudoDados)->html());
+        $data = pq('#rfb-main-container');
+        $data = $data->find('clConteudoDados');
+        $index = 0;
 
-        if (isset($result[0])) {
-            $result[0] = str_replace('N<sup>o</sup> do CPF: ', '', $result[0]);
-
-            if (!Utils::isCpf($result[0]))
-                throw new \Exception('O CPF informado não é válido');
-
-            return(array(
-                'cnpj' => Utils::unmask($result[0]),
-                'nome' => str_replace('Nome da Pessoa Física: ', '', $result[1]),
-                'situacao_cadastral' => str_replace('Situação Cadastral: ', '', $result[2]),
-                'digito_verificador' => str_replace('Digito Verificador: ', '', $result[3])
-            ));
-        } else
-            throw new \Exception('Aconteceu um erro ao fazer a consulta. Envie os dados novamente.');
+        foreach ($data as $item){
+            if ($index == 0){
+                $name = $item->htmlOuter();
+                $name = str_replace('<span class="clConteudoDados">N<sup>o</sup> do CPF: ', '', $name);
+                $name = str_replace('</span>', '', $name);
+                $result['cpf'] = $name;
+            } else if ($index == 1){
+                $result['name'] = $item->htmlOuter();
+            } else if ($index == 2){
+                $result['situacao'] = $item->htmlOuter();
+            } else if ($index == 3){
+                $result['digito'] = $item->htmlOuter();
+            }
+            $index++;
+        }
+        
+        return $result;
     }
 
 }
