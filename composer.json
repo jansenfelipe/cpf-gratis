@@ -24,15 +24,5 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0-dev"
-        }
-    },
-    "suggest": {
-        "jansenfelipe/cnpj-gratis": "Permite consulta de CNPJ no site da receita",
-        "jansenfelipe/cep-gratis": "Permite consulta de CEP no site dos Correios"
-    },
-    "minimum-stability": "dev"
+    }
 }
