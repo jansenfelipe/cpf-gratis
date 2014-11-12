@@ -90,7 +90,7 @@ class CpfGratis {
 
         $param = array(
             //'viewstate' => $viewstate,
-            'txtToken_captcha_serpro_gov_br' => $stringCookie,
+            'txtToken_captcha_serpro_gov_br' => $token,
             'txtTexto_captcha_serpro_gov_br' => $captcha,
             'captchaAudio' => '',
             'Enviar' => 'Consultar',
@@ -122,28 +122,22 @@ class CpfGratis {
             require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
 
         \phpQuery::newDocumentHTML($html, $charset = 'utf-8');
-
         $result = array();
-        $data = pq('#rfb-main-container');
-        $data = $data->find('clConteudoDados');
-        $index = 0;
 
-        foreach ($data as $item){
-            if ($index == 0){
-                $name = $item->htmlOuter();
-                $name = str_replace('<span class="clConteudoDados">N<sup>o</sup> do CPF: ', '', $name);
-                $name = str_replace('</span>', '', $name);
-                $result['cpf'] = $name;
-            } else if ($index == 1){
-                $result['name'] = $item->htmlOuter();
-            } else if ($index == 2){
-                $result['situacao'] = $item->htmlOuter();
-            } else if ($index == 3){
-                $result['digito'] = $item->htmlOuter();
-            }
-            $index++;
-        }
-        
+        // Nome
+        $nome = explode('Nome da Pessoa Física: ', utf8_encode($html));
+        $nome = $nome[1];
+        $nome = explode('</span>', $nome);
+        $nome = $nome[0];
+        $result['nome'] = $nome;
+
+        // Situação
+        $situacao = explode(' Cadastral: ', $html);
+        $situacao = $situacao[1];
+        $situacao = explode('</span>', $situacao);
+        $situacao = $situacao[0];
+        $result['situacao'] = $situacao;
+
         return $result;
     }
 
