@@ -1,5 +1,5 @@
 # CPF Grátis
-[![Travis](https://travis-ci.org/jansenfelipe/cpf-gratis.svg?branch=1.0)](https://travis-ci.org/jansenfelipe/cpf-gratis)
+[![Travis](https://travis-ci.org/jansenfelipe/cpf-gratis.svg?branch=2.0)](https://travis-ci.org/jansenfelipe/cpf-gratis)
 [![Latest Stable Version](https://poser.pugx.org/jansenfelipe/cpf-gratis/v/stable.svg)](https://packagist.org/packages/jansenfelipe/cpf-gratis) [![Total Downloads](https://poser.pugx.org/jansenfelipe/cpf-gratis/downloads.svg)](https://packagist.org/packages/jansenfelipe/cpf-gratis) [![Latest Unstable Version](https://poser.pugx.org/jansenfelipe/cpf-gratis/v/unstable.svg)](https://packagist.org/packages/jansenfelipe/cpf-gratis) [![License](https://poser.pugx.org/jansenfelipe/cpf-gratis/license.svg)](https://packagist.org/packages/jansenfelipe/cpf-gratis)
 
 
@@ -11,7 +11,7 @@ Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para s
 
 Adicione no seu arquivo `composer.json` o seguinte registro na chave `require`
 
-    "jansenfelipe/cpf-gratis": "1.0.*@dev"
+    "jansenfelipe/cpf-gratis": "2.0.*@dev"
 
 Execute
 
@@ -23,14 +23,14 @@ Adicione o autoload.php do composer no seu arquivo PHP.
 
 Primeiro chame o método `getParams()` para retornar os dados necessários para enviar no método `consulta()` 
 
-    $params = CpfGratis::getParams(); //Output: array('captcha', 'captchaBase64', 'viewstate', 'cookie')
+    $params = CpfGratis::getParams(); //Output: array('captchaBase64', 'token', 'cookie')
 
-Agora chame o método `consulta()`
+Agora basta chamar o método `consulta()`
 
     $dadosPessoa = CpfGratis::consulta(
         'INFORME_O_CPF',
         'INFORME_AS_LETRAS_DO_CAPTCHA',
-        $params['viewstate'],
+        $params['token'],
         $params['cookie']
     );
 
