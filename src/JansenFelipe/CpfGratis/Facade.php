@@ -1,11 +1,11 @@
 <?php
 
-namespace JansenFelipe\CnpjGratis;
+namespace JansenFelipe\CpfGratis;
 
 class Facade extends \Illuminate\Support\Facades\Facade {
 
     protected static function getFacadeAccessor() {
-        return 'cnpj_gratis';
+        return 'cpf_gratis';
     }
 
 }
