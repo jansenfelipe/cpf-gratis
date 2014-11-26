@@ -14,59 +14,35 @@ class CpfGratis {
      * @throws Exception
      * @return array Link para ver o Captcha, Viewstate e Cookie
      */
-    public static function getParams() {
-        $ch = curl_init('http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/ConsultaPublica.asp');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-
-        $response = curl_exec($ch);
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        curl_close($ch);
-
-        $header = substr($response, 0, $header_size);
-        $body = substr($response, $header_size);
-
-        $out = preg_split("|(?:\r?\n){1}|m", $header);
-
-        foreach ($out as $line) {
-            @list($key, $val) = explode(": ", $line, 2);
-            if ($val != null) {
-                if (!array_key_exists($key, $headers))
-                    $headers[$key] = trim($val);
-            } else
-                $headers[] = $key;
-        }
-        
-        if (!method_exists('phpQuery', 'newDocumentHTML'))
-            require_once __DIR__ . DIRECTORY_SEPARATOR . 'phpQuery-onefile.php';
-        
-        \phpQuery::newDocumentHTML($body, $charset = 'utf-8');
-
-        $clientId = \phpQuery::pq("div[data-clienteid]:first")->attr('data-clienteid');
-        
+    public static function getParams() {                                
         /*
-         * Enviando post para obter base64 da imagem
+         * gets base64 image captcha
          */    
         $ch = curl_init();
         ob_start();
-        curl_setopt($ch,CURLOPT_URL, 'http://captcha2.servicoscorporativos.serpro.gov.br/captcha/1.0.0/imagem');
-        curl_setopt($ch,CURLOPT_POST, 1);
-        curl_setopt($ch,CURLOPT_POSTFIELDS, $clientId);
+        curl_setopt($ch,CURLOPT_URL, 'http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/captcha/gerarCaptcha.asp');
         curl_setopt($ch, CURLOPT_ENCODING ,"");
+        curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_exec($ch);
-        $result = ob_get_contents();
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $result = ob_get_contents();        
         curl_close($ch);
+        $header = substr($result, 0, $header_size);
         ob_end_clean();
-        $result = explode('@', $result);
 
-        if (sizeof($result) < 2){
-            exit('Não foi possível obter o token, tente novamente');
-        }
+        /*
+         * Gets cookie
+         */        
+        $stringCookie = explode('Set-Cookie: ', $header);
+        $stringCookie = explode(';', $stringCookie[1]);
+        $stringCookie = $stringCookie[0];
+
+        $result = substr($result, $header_size);
+        $result = base64_encode($result);
                         
         return array(
-            'token'  => $result[0],
-            'image'  => $result[1],
-            'cookie' => $headers['Set-Cookie']
+            'image'  => $result,
+            'cookie' => $stringCookie
         );
     }
 
@@ -80,9 +56,8 @@ class CpfGratis {
      * @throws Exception
      * @return array  Dados da pessoa
      */
-    public static function consulta($cpf, $token, $captcha, $stringCookie) {
-        $arrayCookie = explode(';', $stringCookie);
-
+    public static function consulta($cpf, $captcha, $stringCookie) {
+        
         if (!Utils::isCpf($cpf))
             exit('O CPF informado não é válido');
 
@@ -90,24 +65,24 @@ class CpfGratis {
 
         $param = array(
             //'viewstate' => $viewstate,
-            'txtToken_captcha_serpro_gov_br' => $token,
+            //'txtToken_captcha_serpro_gov_br' => $token,
             'txtTexto_captcha_serpro_gov_br' => $captcha,
-            'captchaAudio' => '',
             'Enviar' => 'Consultar',
             'txtCPF' => Utils::unmask($cpf)
         );
 
+        var_dump($stringCookie);
+
         $options = array(
             CURLOPT_COOKIEJAR => 'cookiejar',
-            CURLOPT_HTTPHEADER => array(
-                "Host: www.receita.fazenda.gov.br",
-                "User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:32.0) Gecko/20100101 Firefox/32.0",
-                "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-                "Accept-Language: pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3",
-                "Accept-Encoding: gzip, deflate",
+            CURLOPT_HTTPHEADER => array(                
                 "Referer: http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/ConsultaPublica.asp",
-                "Cookie: ' . $arrayCookie[0] . '",
-                "Connection: keep-alive"
+                "Cookie: ".$stringCookie,
+                "Connection: keep-alive",
+                "Host: www.receita.fazenda.gov.br",
+                "Origin: http://www.receita.fazenda.gov.br",
+                "Cache-Control: max-age=0",
+                "Content-Type: application/x-www-form-urlencoded"
             ),
             CURLOPT_POSTFIELDS => http_build_query($param),
             CURLOPT_RETURNTRANSFER => true,
