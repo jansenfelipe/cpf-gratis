@@ -20,12 +20,14 @@ class CpfGratis {
         $client = new Client();
 
         $crawler = $client->request('GET', 'http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/ConsultaPublica.asp');
-        $dataclienteid = $crawler->filter('#captchaConsutlaSituacao > div')->first()->attr('data-clienteid');
 
         $response = $client->getResponse();
-        $headers = $response->getHeaders();
 
-        $ch = curl_init("http://captcha2.servicoscorporativos.serpro.gov.br/captcha/1.0.0/imagem");
+        $headers = $response->getHeaders();
+        $cookie = $headers['Set-Cookie'][0];
+
+
+        $ch = curl_init("http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/captcha/gerarCaptcha.asp");
         $options = array(
             CURLOPT_COOKIEJAR => 'cookiejar',
             CURLOPT_HTTPHEADER => array(
@@ -37,10 +39,9 @@ class CpfGratis {
                 "Accept-Language: pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3",
                 "Accept-Encoding: gzip, deflate",
                 "Referer: http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/ConsultaPublica.asp",
-                //"Cookie: ' . $arrayCookie[0] . '",
+                "Cookie: $cookie",
                 "Connection: keep-alive"
             ),
-            CURLOPT_POSTFIELDS => $dataclienteid,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => 1,
             CURLOPT_BINARYTRANSFER => TRUE
@@ -50,12 +51,9 @@ class CpfGratis {
         $img = curl_exec($ch);
         curl_close($ch);
 
-        $split = explode('@', $img);
-
         return array(
-            'token' => $split[0],
-            'cookie' => $headers['Set-Cookie'][0],
-            'captchaBase64' => $split[1]
+            'cookie' => $cookie,
+            'captchaBase64' => 'data:image/png;base64,' . base64_encode($img)
         );
     }
 
@@ -64,12 +62,11 @@ class CpfGratis {
      *
      * @param  string $cpf CPF
      * @param  string $captcha CAPTCHA
-     * @param  string $token TOKEN
      * @param  string $stringCookie COOKIE
      * @throws Exception
      * @return array  Dados da pessoa
      */
-    public static function consulta($cpf, $captcha, $token, $stringCookie) {
+    public static function consulta($cpf, $captcha, $stringCookie) {
         try {
             $arrayCookie = explode(';', $stringCookie);
 
@@ -85,11 +82,9 @@ class CpfGratis {
             $client->setHeader('Referer', 'http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/ConsultaPublica.asp');
             $client->setHeader('Cookie', $arrayCookie[0]);
             $client->setHeader('Connection', 'keep-alive');
-            $client->setServerParameter($stringCookie, $token);
 
             $param = array(
                 'txtCPF' => Utils::unmask($cpf),
-                'txtToken_captcha_serpro_gov_br' => $token,
                 'txtTexto_captcha_serpro_gov_br' => $captcha,
                 'Enviar' => 'Consultar',
             );
