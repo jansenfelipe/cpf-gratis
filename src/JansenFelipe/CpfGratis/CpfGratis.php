@@ -51,8 +51,14 @@ class CpfGratis {
         $img = curl_exec($ch);
         curl_close($ch);
 
+        $resource = curl_init('http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/captcha/gerarSom.asp');
+        curl_setopt_array($resource, $options);
+        $file = curl_exec($resource);
+        curl_close($resource);
+
         return array(
             'cookie' => $cookie,
+            'audio' => $file,
             'captchaBase64' => 'data:image/png;base64,' . base64_encode($img)
         );
     }
@@ -92,6 +98,8 @@ class CpfGratis {
             $crawler = $client->request('POST', 'http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/ConsultaPublicaExibir.asp', $param);
 
             $clConteudoDados = $crawler->filter('span.clConteudoDados');
+
+
 
             return(array(
                 'cpf' => Utils::unmask($cpf),
