@@ -11,21 +11,29 @@ Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para s
 
 Adicione a library
 
-    $ composer require jansenfelipe/cpf-gratis
-    
+```sh
+$ composer require jansenfelipe/cpf-gratis
+```
+
 Adicione o autoload.php do composer no seu arquivo PHP.
 
-    require_once 'vendor/autoload.php';  
+```php
+require_once 'vendor/autoload.php';  
+```
 
 Primeiro chame o método `getParams()` para retornar os dados necessários para enviar no método `consulta()` 
 
-    $params = JansenFelipe\CpfGratis\CpfGratis::getParams(); 
+```php
+$params = JansenFelipe\CpfGratis\CpfGratis::getParams(); 
+```
 
 Agora basta chamar o método `consulta()`
 
-    $dadosPessoa = JansenFelipe\CpfGratis\CpfGratis::consulta(
-        'INFORME_O_CPF',
-        'INFORME_A_DATA_DE_NASCIMENTO',
-        'INFORME_AS_LETRAS_DO_CAPTCHA',
-        $params['cookie']
-    );
+```php
+$dadosPessoa = JansenFelipe\CpfGratis\CpfGratis::consulta(
+    'INFORME_O_CPF',
+    'INFORME_A_DATA_DE_NASCIMENTO',
+    'INFORME_AS_LETRAS_DO_CAPTCHA',
+    $params['cookie']
+);
+```
