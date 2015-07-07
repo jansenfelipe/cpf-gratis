@@ -67,12 +67,13 @@ class CpfGratis {
      * Metodo para realizar a consulta
      *
      * @param  string $cpf CPF
+     * @param  string $nascimento NASCIMENTO (DDMMYYYY)
      * @param  string $captcha CAPTCHA
      * @param  string $stringCookie COOKIE
      * @throws Exception
      * @return array  Dados da pessoa
      */
-    public static function consulta($cpf, $nasc, $captcha, $stringCookie) {
+    public static function consulta($cpf, $nascimento, $captcha, $stringCookie) {
         try {
             $arrayCookie = explode(';', $stringCookie);
 
@@ -91,7 +92,7 @@ class CpfGratis {
 
             $param = array(
                 'tempTxtCPF' => Utils::unmask($cpf),
-                'tempTxtNascimento' => $nasc,
+                'tempTxtNascimento' => $nascimento,
                 'temptxtTexto_captcha_serpro_gov_br' => $captcha,
                 'txtTexto_captcha_serpro_gov_br' => $captcha,
                 'Enviar' => 'Consultar'
@@ -101,13 +102,13 @@ class CpfGratis {
 
             $clConteudoDados = $crawler->filter('span.clConteudoDados');
 
-
-
             return(array(
                 'cpf' => Utils::unmask($cpf),
-                'nome' => trim(str_replace('Nome da Pessoa Física: ', '', $clConteudoDados->eq(1)->html())),
-                'situacao_cadastral' => str_replace('Situação Cadastral: ', '', $clConteudoDados->eq(2)->html()),
-                'digito_verificador' => str_replace('Digito Verificador: ', '', $clConteudoDados->eq(3)->html())
+                'nome' => trim(str_replace('Nome da Pessoa Física: ', '', $clConteudoDados->eq(1)->filter('b')->html())),
+                'nascimento' => trim(str_replace('Data de Nascimento: ', '', $clConteudoDados->eq(2)->filter('b')->html())),
+                'situacao_cadastral' => str_replace('Situação Cadastral: ', '', $clConteudoDados->eq(3)->filter('b')->html()),
+                'situacao_cadastral_data' => str_replace('Data da Inscrição: ', '', $clConteudoDados->eq(4)->filter('b')->html()),
+                'digito_verificador' => str_replace('Digito Verificador: ', '', $clConteudoDados->eq(5)->filter('b')->html())
             ));
         } catch (Exception $e) {
             throw new Exception('Aconteceu um erro ao fazer a consulta. Envie os dados novamente.');

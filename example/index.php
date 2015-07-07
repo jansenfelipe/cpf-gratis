@@ -19,7 +19,7 @@ if(isset($_POST['captcha']) && isset($_POST['cookie']) && isset($_POST['cpf']) &
     
     <input type="text" name="captcha" placeholder="Captcha" />
     <input type="text" name="cpf" placeholder="CPF" />
-    <input type="text" name="data_nascimento" placeholder="Nascimento" />
+    <input type="text" name="data_nascimento" placeholder="Nascimento (DDMMYYYY)" />
     
     <button type="submit">Consultar</button>
 </form>
