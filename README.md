@@ -25,6 +25,7 @@ Agora basta chamar o método `consulta()`
 
     $dadosPessoa = JansenFelipe\CpfGratis\CpfGratis::consulta(
         'INFORME_O_CPF',
+        'INFORME_A_DATA_DE_NASCIMENTO',
         'INFORME_AS_LETRAS_DO_CAPTCHA',
         $params['cookie']
     );

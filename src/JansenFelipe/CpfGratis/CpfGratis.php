@@ -72,7 +72,7 @@ class CpfGratis {
      * @throws Exception
      * @return array  Dados da pessoa
      */
-    public static function consulta($cpf, $captcha, $stringCookie) {
+    public static function consulta($cpf, $nasc, $captcha, $stringCookie) {
         try {
             $arrayCookie = explode(';', $stringCookie);
 
@@ -90,9 +90,11 @@ class CpfGratis {
             $client->setHeader('Connection', 'keep-alive');
 
             $param = array(
-                'txtCPF' => Utils::unmask($cpf),
+                'tempTxtCPF' => Utils::unmask($cpf),
+                'tempTxtNascimento' => $nasc,
+                'temptxtTexto_captcha_serpro_gov_br' => $captcha,
                 'txtTexto_captcha_serpro_gov_br' => $captcha,
-                'Enviar' => 'Consultar',
+                'Enviar' => 'Consultar'
             );
 
             $crawler = $client->request('POST', 'http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/ConsultaPublicaExibir.asp', $param);
