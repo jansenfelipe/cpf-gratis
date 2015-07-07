@@ -9,7 +9,15 @@ Com esse pacote você poderá realizar consultas de CPF no site da Receita Feder
 
 Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para ser digitado pelo usuário
 
-### Como usar
+### Changelog
+
+* 2.0.4 - 07/07/2015 Necessário informar a data de nascimento
+* 2.0.3 - 21/01/2015 Retornar binário de áudio
+* 2.0.2 - 29/12/2014 Remoção do token
+* 2.0.1 - 19/11/2014 Bugfix. Set PHP >=5.4
+* 2.0.0 - 18/11/2014 Alteração do site
+
+### Como utilizar
 
 Adicione a library
 
@@ -40,6 +48,6 @@ $dadosPessoa = JansenFelipe\CpfGratis\CpfGratis::consulta(
 );
 ```
 
-# License
+### License
 
 The MIT License (MIT)
