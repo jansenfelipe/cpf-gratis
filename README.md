@@ -47,6 +47,11 @@ $dadosPessoa = JansenFelipe\CpfGratis\CpfGratis::consulta(
     $params['cookie']
 );
 ```
+### Gostou? Conheça também
+
+* [CnpjGratis](https://github.com/jansenfelipe/cnpj-gratis)
+* [CepGratis](https://github.com/jansenfelipe/cep-gratis)
+* [Nfephp-serialize](https://github.com/jansenfelipe/nfephp-serialize)
 
 ### License
 
