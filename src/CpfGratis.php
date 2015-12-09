@@ -101,6 +101,7 @@ class CpfGratis {
             $crawler = $client->request('POST', 'http://www.receita.fazenda.gov.br/aplicacoes/atcta/cpf/ConsultaPublicaExibir.asp', $param);
 
             $clConteudoDados = $crawler->filter('span.clConteudoDados');
+            $clConteudoComp = $crawler->filter('span.clConteudoComp');
 
             return(array(
                 'cpf' => Utils::unmask($cpf),
@@ -108,7 +109,10 @@ class CpfGratis {
                 'nascimento' => trim(str_replace('Data de Nascimento: ', '', $clConteudoDados->eq(2)->filter('b')->html())),
                 'situacao_cadastral' => str_replace('Situação Cadastral: ', '', $clConteudoDados->eq(3)->filter('b')->html()),
                 'situacao_cadastral_data' => str_replace('Data da Inscrição: ', '', $clConteudoDados->eq(4)->filter('b')->html()),
-                'digito_verificador' => str_replace('Digito Verificador: ', '', $clConteudoDados->eq(5)->filter('b')->html())
+                'digito_verificador' => str_replace('Digito Verificador: ', '', $clConteudoDados->eq(5)->filter('b')->html()),
+                'hora_emissao' => str_replace('Hora de emissão: ', '', $clConteudoComp->eq(0)->filter('b')->first()->html()),
+                'data_emissao' => str_replace('Data de emissão: ', '', $clConteudoComp->eq(0)->filter('b')->last()->html()),
+                'codigo_controle' => str_replace('Código de controle: ', '', $clConteudoComp->eq(1)->filter('b')->html())
             ));
         } catch (Exception $e) {
             throw new Exception('Aconteceu um erro ao fazer a consulta. Envie os dados novamente.');
