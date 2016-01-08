@@ -52,7 +52,7 @@ $dadosPessoa = JansenFelipe\CpfGratis\CpfGratis::consulta(
 * [CnpjGratis](https://github.com/jansenfelipe/cnpj-gratis)
 * [CepGratis](https://github.com/jansenfelipe/cep-gratis)
 * [CidadesGratis](https://github.com/jansenfelipe/cidades-gratis)
-* [NFePHP-serialize](https://github.com/jansenfelipe/nfephp-serialize)
+* [NFePHPSerialize](https://github.com/jansenfelipe/nfephp-serialize)
 
 ### License
 
