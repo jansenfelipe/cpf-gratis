@@ -12,7 +12,7 @@ Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para s
 ### Changelog
 
 * 2.0.6 - 18/08/2015 Correção SSL. Obrigado @clbonatto @JRAVILES @gustavomac89
-* 2.0.5 - 18/08/2015 Retornando mais dados. @marcelosevero
+* 2.0.5 - 23/07/2015 Retornando mais dados. @marcelosevero
 * 2.0.4 - 07/07/2015 Necessário informar a data de nascimento
 * 2.0.3 - 21/01/2015 Retornar binário de áudio
 * 2.0.2 - 29/12/2014 Remoção do token
