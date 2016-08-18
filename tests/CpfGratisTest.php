@@ -15,7 +15,6 @@ class CpfGratisTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals(true, isset($this->params['captchaBase64']));
         $this->assertEquals(true, isset($this->params['cookie']));
-        $this->assertEquals(true, isset($this->params['audio']));
     }
 
 }
