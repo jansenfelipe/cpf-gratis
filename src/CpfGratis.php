@@ -19,15 +19,15 @@ class CpfGratis {
     public static function getParams()
     {
         $client = new Client();
-
+        
         $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSL_VERIFYPEER, false);
         $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSL_VERIFYHOST, false);
         $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSLVERSION, 3);
 
         $client->request('GET', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/ConsultaPublica.asp');
-
-        $headers = $client->getResponse()->getHeaders();
-        $cookie = $headers['Set-Cookie'][0];
+        
+        $internal_cookies = $client->getCookieJar()->all()[0];
+        $cookie = $internal_cookies->getName().'='.$internal_cookies->getValue(). '; path='. $internal_cookies->getPath();
 
         $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_BINARYTRANSFER, true);
         $client->request('GET', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/captcha/gerarCaptcha.asp');
@@ -80,7 +80,7 @@ class CpfGratis {
             'temptxtTexto_captcha_serpro_gov_br' => $captcha
         );
 
-        $crawler = $client->request('POST', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/ConsultaPublicaExibir.asp', $param);
+        $crawler = $client->request('POST', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/ConsultaSituacao/ConsultaPublicaExibir.asp', $param);
 
         $error = $crawler->filter('span.mensagemErro');
 
