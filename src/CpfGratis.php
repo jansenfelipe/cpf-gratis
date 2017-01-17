@@ -19,15 +19,15 @@ class CpfGratis {
     public static function getParams()
     {
         $client = new Client();
-
+        
         $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSL_VERIFYPEER, false);
         $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSL_VERIFYHOST, false);
         $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSLVERSION, 3);
 
         $client->request('GET', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/ConsultaPublica.asp');
-
-        $headers = $client->getResponse()->getHeaders();
-        $cookie = $headers['Set-Cookie'][0];
+        
+        $internal_cookies = $client->getCookieJar()->all()[0];
+        $cookie = $internal_cookies->getName().'='.$internal_cookies->getValue(). '; path='. $internal_cookies->getPath();
 
         $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_BINARYTRANSFER, true);
         $client->request('GET', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/captcha/gerarCaptcha.asp');
