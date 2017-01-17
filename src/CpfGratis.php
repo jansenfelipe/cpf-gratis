@@ -80,7 +80,7 @@ class CpfGratis {
             'temptxtTexto_captcha_serpro_gov_br' => $captcha
         );
 
-        $crawler = $client->request('POST', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/ConsultaPublicaExibir.asp', $param);
+        $crawler = $client->request('POST', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/ConsultaSituacao/ConsultaPublicaExibir.asp', $param);
 
         $error = $crawler->filter('span.mensagemErro');
 
