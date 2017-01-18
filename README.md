@@ -11,8 +11,9 @@ Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para s
 
 ### Changelog
 
-* 2.0.6 - 18/08/2016 Correção SSL. Obrigado @clbonatto @JRAVILES @gustavomac89
-* 2.0.5 - 23/07/2016 Retornando mais dados. @marcelosevero
+* 2.0.7 - 18/01/2017 Fix alteração do site. [@faelp22](https://github.com/faelp22)
+* 2.0.6 - 18/08/2016 Correção SSL. [@clbonatto](https://github.com/clbonatto) [@JRAVILES](https://github.com/JRAVILES) [@gustavomac89](https://github.com/gustavomac89)
+* 2.0.5 - 23/07/2016 Retornando mais dados. [@marcelosevero](https://github.com/marcelosevero)
 * 2.0.4 - 07/07/2015 Necessário informar a data de nascimento
 * 2.0.3 - 21/01/2015 Retornar binário de áudio
 * 2.0.2 - 29/12/2014 Remoção do token
