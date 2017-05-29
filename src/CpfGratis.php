@@ -22,7 +22,7 @@ class CpfGratis {
         
         $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSL_VERIFYPEER, false);
         $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSL_VERIFYHOST, false);
-        $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSLVERSION, 3);
+        $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSLVERSION, 4);
 
         $client->request('GET', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/ConsultaPublica.asp');
         
@@ -61,7 +61,7 @@ class CpfGratis {
 
         $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSL_VERIFYPEER, false);
         $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSL_VERIFYHOST, false);
-        $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSLVERSION, 3);
+        $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSLVERSION, 4);
 
         $client->setHeader('Host', 'www.receita.fazenda.gov.br');
         $client->setHeader('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:32.0) Gecko/20100101 Firefox/32.0');
