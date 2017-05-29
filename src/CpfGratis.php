@@ -92,7 +92,7 @@ class CpfGratis {
 
         return(array(
             'cpf' => Utils::unmask($cpf),
-            'nome' => trim(str_replace('Nome da Pessoa Física: ', '', $clConteudoDados->eq(1)->filter('b')->html())),
+            'nome' => trim(str_replace('Nome: ', '', $clConteudoDados->eq(1)->filter('b')->html())),
             'nascimento' => trim(str_replace('Data de Nascimento: ', '', $clConteudoDados->eq(2)->filter('b')->html())),
             'situacao_cadastral' => str_replace('Situação Cadastral: ', '', $clConteudoDados->eq(3)->filter('b')->html()),
             'situacao_cadastral_data' => str_replace('Data da Inscrição: ', '', $clConteudoDados->eq(4)->filter('b')->html()),
