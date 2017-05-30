@@ -1,5 +1,5 @@
 # CPF Grátis
-[![Travis](https://travis-ci.org/jansenfelipe/cpf-gratis.svg?branch=2.0)](https://travis-ci.org/jansenfelipe/cpf-gratis)
+[![Travis](https://travis-ci.org/jansenfelipe/cpf-gratis.svg?branch=3.0)](https://travis-ci.org/jansenfelipe/cpf-gratis)
 [![Latest Stable Version](https://poser.pugx.org/jansenfelipe/cpf-gratis/v/stable.svg)](https://packagist.org/packages/jansenfelipe/cpf-gratis) 
 [![Total Downloads](https://poser.pugx.org/jansenfelipe/cpf-gratis/downloads.svg)](https://packagist.org/packages/jansenfelipe/cpf-gratis) 
 [![Latest Unstable Version](https://poser.pugx.org/jansenfelipe/cpf-gratis/v/unstable.svg)](https://packagist.org/packages/jansenfelipe/cpf-gratis)
@@ -11,6 +11,7 @@ Atenção: Esse pacote não possui leitor de captcha, mas captura o mesmo para s
 
 ### Changelog
 
+* 3.0.0 - 30/05/2017 Alteraçao host
 * 2.0.7 - 18/01/2017 Fix alteração do site. [@faelp22](https://github.com/faelp22)
 * 2.0.6 - 18/08/2016 Correção SSL. [@clbonatto](https://github.com/clbonatto) [@JRAVILES](https://github.com/JRAVILES) [@gustavomac89](https://github.com/gustavomac89)
 * 2.0.5 - 23/07/2016 Retornando mais dados. [@marcelosevero](https://github.com/marcelosevero)
