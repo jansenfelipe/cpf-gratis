@@ -5,6 +5,7 @@ namespace JansenFelipe\CpfGratis;
 use Exception;
 use Goutte\Client;
 use JansenFelipe\Utils\Utils;
+use Symfony\Component\DomCrawler\Crawler;
 
 class CpfGratis {
 
@@ -19,24 +20,31 @@ class CpfGratis {
     public static function getParams()
     {
         $client = new Client();
-        
-        $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSL_VERIFYPEER, false);
-        $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSL_VERIFYHOST, false);
-        $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSLVERSION, 4);
 
-        $client->request('GET', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/ConsultaPublica.asp');
-        
+        $client->setHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8');
+        $client->setHeader('Accept-Encoding', 'gzip, deflate, sdch');
+        $client->setHeader('Accept-Language', 'pt-BR,pt;q=0.8,en-US;q=0.6,en;q=0.4,es;q=0.2,it;q=0.2');
+        $client->setHeader('Cache-Control', 'max-age=0');
+        $client->setHeader('Connection', 'keep-alive');
+        $client->setHeader('Host', 'cpf.receita.fazenda.gov.br');
+        $client->setHeader('Upgrade-Insecure-Requests', '1');
+        $client->setHeader('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36');
+
+        $crawler = $client->request('GET', 'http://cpf.receita.fazenda.gov.br/situacao');
+
+        $payload = $crawler->filter('#idCaptchaInput')->attr('data-clienteid');
+
         $internal_cookies = $client->getCookieJar()->all()[0];
         $cookie = $internal_cookies->getName().'='.$internal_cookies->getValue(). '; path='. $internal_cookies->getPath();
 
-        $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_BINARYTRANSFER, true);
-        $client->request('GET', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/captcha/gerarCaptcha.asp');
+        $client->request('POST', 'http://captcha2.servicoscorporativos.serpro.gov.br/captcha/1.0.0/imagem', [], [], [], $payload);
 
-        $image = base64_encode($client->getResponse()->getContent());
+        $response = explode('@', $client->getResponse()->getContent());
 
         return array(
             'cookie' => $cookie,
-            'captchaBase64' => 'data:image/png;base64,' . $image
+            'captchaToken' => $response[0],
+            'captchaBase64' => 'data:image/png;base64,' . $response[1]
         );
     }
 
@@ -47,60 +55,67 @@ class CpfGratis {
      * @param  string $nascimento NASCIMENTO (DDMMYYYY)
      * @param  string $captcha CAPTCHA
      * @param  string $stringCookie COOKIE
+     * @param  string $token CAPTCHA TOKEN
      * @throws Exception
      * @return array  Dados da pessoa
      */
-    public static function consulta($cpf, $nascimento, $captcha, $stringCookie)
+    public static function consulta($cpf, $nascimento, $captcha, $stringCookie, $token)
     {
         $arrayCookie = explode(';', $stringCookie);
 
         if (!Utils::isCpf($cpf))
             throw new Exception("CPF inválido");
 
-        $client = new Client();
+        $client = new Client(['allow_redirects' => false]);
 
-        $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSL_VERIFYPEER, false);
-        $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSL_VERIFYHOST, false);
-        $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_SSLVERSION, 4);
-
-        $client->setHeader('Host', 'www.receita.fazenda.gov.br');
-        $client->setHeader('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:32.0) Gecko/20100101 Firefox/32.0');
-        $client->setHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8');
-        $client->setHeader('Accept-Language', 'pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3');
-        $client->setHeader('Accept-Encoding', 'gzip, deflate');
-        $client->setHeader('Referer', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/ConsultaPublica.asp');
-        $client->setHeader('Cookie', $arrayCookie[0]);
+        $client->setHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8');
+        $client->setHeader('Accept-Encoding', 'gzip, deflate, sdch');
+        $client->setHeader('Accept-Language', 'pt-BR,pt;q=0.8,en-US;q=0.6,en;q=0.4,es;q=0.2,it;q=0.2');
+        $client->setHeader('Cache-Control', 'max-age=0');
         $client->setHeader('Connection', 'keep-alive');
+        $client->setHeader('Cookie', $arrayCookie[0]);
+        $client->setHeader('Host', 'cpf.receita.fazenda.gov.br');
+        $client->setHeader('Origin', 'http://cpf.receita.fazenda.gov.br');
+        $client->setHeader('Referer', 'http://cpf.receita.fazenda.gov.br/situacao/');
+        $client->setHeader('Upgrade-Insecure-Requests', '1');
+        $client->setHeader('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36');
 
         $param = array(
+            'txtToken_captcha_serpro_gov_br' => $token,
             'txtTexto_captcha_serpro_gov_br' => $captcha,
-            'tempTxtCPF' => $cpf,
-            'tempTxtNascimento' => $nascimento,
-            'temptxtToken_captcha_serpro_gov_br' => $captcha,
-            'temptxtTexto_captcha_serpro_gov_br' => $captcha
+            'txtCPF' => $cpf,
+            'txtDataNascimento' => $nascimento
         );
 
-        $crawler = $client->request('POST', 'https://www.receita.fazenda.gov.br/Aplicacoes/SSL/ATCTA/CPF/ConsultaSituacao/ConsultaPublicaExibir.asp', $param);
+        $crawler = $client->request('POST', 'http://cpf.receita.fazenda.gov.br/situacao/ConsultaSituacao.asp', $param);
 
-        $error = $crawler->filter('span.mensagemErro');
+        /*
+         * Verificando erros
+         */
+        $idMessageError = $crawler->filter('#idMessageError');
 
-        if($error->count() > 0)
-            throw new Exception($error->html());
+        if($idMessageError->count() > 0)
+            throw new Exception(trim($idMessageError->html()));
 
-        $clConteudoDados = $crawler->filter('span.clConteudoDados');
-        $clConteudoComp = $crawler->filter('span.clConteudoComp');
+        $clConteudoCompBold = $crawler->filter('span.clConteudoCompBold');
 
-        return(array(
-            'cpf' => Utils::unmask($cpf),
-            'nome' => trim(str_replace('Nome da Pessoa Física: ', '', $clConteudoDados->eq(1)->filter('b')->html())),
-            'nascimento' => trim(str_replace('Data de Nascimento: ', '', $clConteudoDados->eq(2)->filter('b')->html())),
-            'situacao_cadastral' => str_replace('Situação Cadastral: ', '', $clConteudoDados->eq(3)->filter('b')->html()),
-            'situacao_cadastral_data' => str_replace('Data da Inscrição: ', '', $clConteudoDados->eq(4)->filter('b')->html()),
-            'digito_verificador' => str_replace('Digito Verificador: ', '', $clConteudoDados->eq(5)->filter('b')->html()),
-            'hora_emissao' => str_replace('Hora de emissão: ', '', $clConteudoComp->eq(0)->filter('b')->first()->html()),
-            'data_emissao' => str_replace('Data de emissão: ', '', $clConteudoComp->eq(0)->filter('b')->last()->html()),
-            'codigo_controle' => str_replace('Código de controle: ', '', $clConteudoComp->eq(1)->filter('b')->html())
-        ));
+        if($clConteudoCompBold->count() > 0)
+            throw new Exception(trim($clConteudoCompBold->html()));
+
+        /*
+         * Buscando dados
+         */
+        $nome = $crawler->filter('#idCnt05 span.clBold')->html();
+        $nascimento = $crawler->filter('#idCnt13 span.clBold')->html();
+        $situacao_cadastral = $crawler->filter('#idCnt06 span.clBold')->html();
+        $situacao_cadastral_data = $crawler->filter('#idCnt14 span.clBold')->html();
+        $digito_verificador = $crawler->filter('#idCnt07 span.clBold')->html();
+
+        $hora_emissao = $crawler->filter('#idCnt08 span.clBold')->eq(0)->html();
+        $data_emissao = $crawler->filter('#idCnt08 span.clBold')->eq(1)->html();
+        $codigo_controle = $crawler->filter('#idCnt09 span.clBold')->html();
+
+        return compact('nome', 'nascimento', 'situacao_cadastral', 'situacao_cadastral_data', 'digito_verificador', 'hora_emissao', 'data_emissao', 'codigo_controle');
     }
 
 }
