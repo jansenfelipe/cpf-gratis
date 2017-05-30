@@ -48,7 +48,8 @@ $dadosPessoa = JansenFelipe\CpfGratis\CpfGratis::consulta(
     'INFORME_O_CPF',
     'INFORME_A_DATA_DE_NASCIMENTO', //DDMMYYYY
     'INFORME_AS_LETRAS_DO_CAPTCHA',
-    $params['cookie']
+    $params['cookie'],
+    'INFORME_O_TOKEN_DO_CAPTCHA'
 );
 ```
 ### Gostou? Conheça também
