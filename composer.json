@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "fabpot/goutte": "2.0.*@dev",
+        "fabpot/goutte": "3.0",
         "jansenfelipe/utils": "^2.0@dev"
     },
     "autoload": {
